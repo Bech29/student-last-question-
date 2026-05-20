@@ -1,65 +1,94 @@
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { useGame } from "@/context/GameContext";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import bg3 from "@assets/bg3_1779248796872.jpg";
 
 export default function ResultScreen() {
-  const { gameState, resetGame } = useGame();
-  const [_, setLocation] = useLocation();
+  const { gameResult, resetGame } = useGame();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
-    if (gameState.playerWon === null) {
+    if (gameResult.playerWon === null) {
       setLocation("/");
     }
-  }, [gameState, setLocation]);
+  }, [gameResult, setLocation]);
 
-  if (gameState.playerWon === null) return null;
+  if (gameResult.playerWon === null) return null;
+
+  const accuracy = gameResult.totalQuestions > 0
+    ? Math.round((gameResult.correctAnswers / gameResult.totalQuestions) * 100)
+    : 0;
+
+  const handlePlayAgain = () => {
+    resetGame();
+    setLocation("/");
+  };
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center bg-background p-4 relative overflow-hidden"
-      style={{
-        backgroundImage: "radial-gradient(circle at center, transparent 0, #000 100%), repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px)"
-      }}
-    >
+    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center relative overflow-hidden">
+      <img
+        src={bg3}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: "center 60%" }}
+      />
+      <div className="absolute inset-0 bg-black/70" />
+
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", bounce: 0.5 }}
-        className="w-full max-w-2xl bg-card border-4 border-white p-8 text-center shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] relative z-10"
+        transition={{ type: "spring", bounce: 0.4 }}
+        className="relative z-10 w-full max-w-lg px-4"
       >
-        <h1 className={`text-4xl md:text-6xl mb-8 font-bold tracking-tighter ${gameState.playerWon ? "text-primary" : "text-destructive"}`}>
-          {gameState.playerWon ? "VICTORY!" : "DEFEAT"}
-        </h1>
+        <div className="border-4 border-white bg-card/90 p-6 md:p-8 text-center shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+          <motion.h1
+            animate={{ textShadow: gameResult.playerWon
+              ? ["0 0 20px #a855f7", "0 0 50px #a855f7", "0 0 20px #a855f7"]
+              : ["0 0 20px #ef4444", "0 0 50px #ef4444", "0 0 20px #ef4444"]
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className={`text-3xl md:text-5xl mb-2 font-bold tracking-tighter leading-loose ${gameResult.playerWon ? "text-primary" : "text-destructive"}`}
+            data-testid="result-title"
+          >
+            {gameResult.playerWon ? "ชนะแล้ว!" : "แพ้แล้ว!"}
+          </motion.h1>
 
-        <div className="grid grid-cols-2 gap-6 text-sm md:text-base mb-12">
-          <div className="bg-background border-2 border-border p-4">
-            <div className="text-muted-foreground mb-2">Questions Answered</div>
-            <div className="text-xl text-white">{gameState.totalQuestions}</div>
-          </div>
-          <div className="bg-background border-2 border-border p-4">
-            <div className="text-muted-foreground mb-2">Accuracy</div>
-            <div className="text-xl text-accent">
-              {gameState.totalQuestions > 0 ? Math.round((gameState.correctAnswers / gameState.totalQuestions) * 100) : 0}%
+          <p className="text-muted-foreground text-xs mb-6 leading-loose">
+            {gameResult.playerWon
+              ? "ยอดเยี่ยม! คุณเอาชนะบอสทั้งหมดได้!"
+              : "สู้ต่อไป! ความรู้คือพลัง!"}
+          </p>
+
+          <div className="grid grid-cols-2 gap-3 text-xs mb-6">
+            <div className="bg-background border-2 border-border p-3">
+              <div className="text-muted-foreground mb-1 leading-loose">ด่านที่ผ่าน</div>
+              <div className="text-lg text-white" data-testid="stages-cleared">{gameResult.stagesCleared} / 6</div>
+            </div>
+            <div className="bg-background border-2 border-border p-3">
+              <div className="text-muted-foreground mb-1 leading-loose">ความแม่นยำ</div>
+              <div className="text-lg text-accent" data-testid="accuracy">{accuracy}%</div>
+            </div>
+            <div className="bg-background border-2 border-border p-3">
+              <div className="text-muted-foreground mb-1 leading-loose">ตอบถูก</div>
+              <div className="text-lg text-green-400" data-testid="correct-count">{gameResult.correctAnswers}</div>
+            </div>
+            <div className="bg-background border-2 border-border p-3">
+              <div className="text-muted-foreground mb-1 leading-loose">ตอบผิด</div>
+              <div className="text-lg text-destructive" data-testid="wrong-count">{gameResult.wrongAnswers}</div>
             </div>
           </div>
-          <div className="bg-background border-2 border-border p-4">
-            <div className="text-muted-foreground mb-2">Correct Hits</div>
-            <div className="text-xl text-green-500">{gameState.correctAnswers}</div>
-          </div>
-          <div className="bg-background border-2 border-border p-4">
-            <div className="text-muted-foreground mb-2">Misses</div>
-            <div className="text-xl text-destructive">{gameState.wrongAnswers}</div>
-          </div>
-        </div>
 
-        <Link
-          href="/"
-          onClick={resetGame}
-          className="inline-block bg-primary text-primary-foreground border-4 border-white px-8 py-4 text-xl hover:bg-accent hover:text-accent-foreground transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase"
-          data-testid="play-again-button"
-        >
-          Play Again
-        </Link>
+          <motion.button
+            animate={{ scale: [1, 1.04, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            onClick={handlePlayAgain}
+            data-testid="play-again-button"
+            className="bg-primary text-primary-foreground border-4 border-white px-8 py-4 text-sm hover:bg-accent hover:text-accent-foreground transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase cursor-pointer"
+          >
+            เล่นอีกครั้ง
+          </motion.button>
+        </div>
       </motion.div>
     </div>
   );

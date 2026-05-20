@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import { GameProvider } from "@/context/GameContext";
 
 import TitleScreen from "@/pages/TitleScreen";
+import CharacterSelectScreen from "@/pages/CharacterSelectScreen";
 import GameScreen from "@/pages/GameScreen";
 import ResultScreen from "@/pages/ResultScreen";
 
@@ -15,6 +16,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={TitleScreen} />
+      <Route path="/select" component={CharacterSelectScreen} />
       <Route path="/game" component={GameScreen} />
       <Route path="/result" component={ResultScreen} />
       <Route component={NotFound} />

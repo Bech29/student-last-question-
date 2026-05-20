@@ -7,40 +7,50 @@ export type Question = {
   correct: number;
 };
 
-export interface GameState {
+export interface Character {
+  id: number;
+  name: string;
+  thaiName: string;
+  image: string;
+}
+
+export interface GameResult {
   playerWon: boolean | null;
   correctAnswers: number;
   wrongAnswers: number;
   totalQuestions: number;
+  stagesCleared: number;
 }
 
 interface GameContextType {
-  gameState: GameState;
-  setGameState: (state: GameState) => void;
+  gameResult: GameResult;
+  setGameResult: (state: GameResult) => void;
+  selectedCharacter: Character | null;
+  setSelectedCharacter: (char: Character) => void;
   resetGame: () => void;
 }
+
+const defaultResult: GameResult = {
+  playerWon: null,
+  correctAnswers: 0,
+  wrongAnswers: 0,
+  totalQuestions: 0,
+  stagesCleared: 0,
+};
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [gameState, setGameState] = useState<GameState>({
-    playerWon: null,
-    correctAnswers: 0,
-    wrongAnswers: 0,
-    totalQuestions: 0,
-  });
+  const [gameResult, setGameResult] = useState<GameResult>(defaultResult);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
   const resetGame = () => {
-    setGameState({
-      playerWon: null,
-      correctAnswers: 0,
-      wrongAnswers: 0,
-      totalQuestions: 0,
-    });
+    setGameResult(defaultResult);
+    setSelectedCharacter(null);
   };
 
   return (
-    <GameContext.Provider value={{ gameState, setGameState, resetGame }}>
+    <GameContext.Provider value={{ gameResult, setGameResult, selectedCharacter, setSelectedCharacter, resetGame }}>
       {children}
     </GameContext.Provider>
   );
