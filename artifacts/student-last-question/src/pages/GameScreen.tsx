@@ -74,7 +74,8 @@ export default function GameScreen() {
 
   // New systems
   const [coins, setCoins] = useState(0);
-  const [buffActive, setBuffActive] = useState(false);
+  const [buffCount, setBuffCount] = useState(0);     // stacks up to 5
+  const [potionCount, setPotionCount] = useState(0); // tracks total purchased, up to 5
   const [shieldActive, setShieldActive] = useState(false);
   const [ultimateGauge, setUltimateGauge] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -112,13 +113,15 @@ export default function GameScreen() {
 
   const triggerUltimate = useCallback(() => {
     if (ultimateGauge < ULTIMATE_MAX || selectedAnswer !== null) return;
-    const damage = 60;
+    // Double the standard base damage range
+    const baseDamage = Math.floor(Math.random() * 11) + 20;
+    const damage = baseDamage * 2;
     const newEnemyHP = Math.max(0, enemyHPRef.current - damage);
     enemyHPRef.current = newEnemyHP;
     setEnemyHP(newEnemyHP);
     setEnemyHit(true);
     setUltimateGauge(0);
-    setFeedback(`ULTIMATE! โจมตีศัตรู ${damage} ความเสียหาย!`);
+    setFeedback(`⚡ ULTIMATE! โจมตี 2× = ${damage} ความเสียหาย! เกจรีเซ็ตแล้ว`);
     setDamageNumbers(prev => [...prev, { id: `ult-${Math.random()}`, amount: damage, isPlayer: false }]);
     setTimeout(() => setEnemyHit(false), 500);
 
@@ -181,22 +184,29 @@ export default function GameScreen() {
   const handleShopBuy = useCallback((itemId: string) => {
     const currentCoins = coinsRef.current;
     if (itemId === "potion" && currentCoins >= 30 && playerHPRef.current < 100) {
-      const healed = Math.min(30, 100 - playerHPRef.current);
-      playerHPRef.current = Math.min(100, playerHPRef.current + healed);
-      coinsRef.current -= 30;
-      setPlayerHP(playerHPRef.current);
-      setCoins(coinsRef.current);
-      setDamageNumbers(prev => [...prev, { id: `heal-${Math.random()}`, amount: healed, isPlayer: true, isHeal: true }]);
-    } else if (itemId === "buff" && currentCoins >= 25 && !buffActive) {
-      coinsRef.current -= 25;
-      setCoins(coinsRef.current);
-      setBuffActive(true);
+      setPotionCount(prev => {
+        if (prev >= 5) return prev;
+        const healed = Math.min(30, 100 - playerHPRef.current);
+        playerHPRef.current = Math.min(100, playerHPRef.current + healed);
+        coinsRef.current -= 30;
+        setPlayerHP(playerHPRef.current);
+        setCoins(coinsRef.current);
+        setDamageNumbers(p => [...p, { id: `heal-${Math.random()}`, amount: healed, isPlayer: true, isHeal: true }]);
+        return prev + 1;
+      });
+    } else if (itemId === "buff" && currentCoins >= 25) {
+      setBuffCount(prev => {
+        if (prev >= 5) return prev;
+        coinsRef.current -= 25;
+        setCoins(coinsRef.current);
+        return prev + 1;
+      });
     } else if (itemId === "shield" && currentCoins >= 40 && !shieldActive) {
       coinsRef.current -= 40;
       setCoins(coinsRef.current);
       setShieldActive(true);
     }
-  }, [buffActive, shieldActive]);
+  }, [shieldActive]);
 
   const handleAnswer = (index: number) => {
     if (selectedAnswer !== null || !questions[questionIndex] || showShop) return;
@@ -210,9 +220,9 @@ export default function GameScreen() {
       setStreak(newStreak);
 
       let damage = Math.floor(Math.random() * 11) + 20;
-      if (buffActive) {
+      if (buffCount > 0) {
         damage += 20;
-        setBuffActive(false);
+        setBuffCount(prev => prev - 1);
       }
 
       const newEnemyHP = Math.max(0, enemyHPRef.current - damage);
@@ -328,7 +338,8 @@ export default function GameScreen() {
             coins={coins}
             playerHP={playerHP}
             maxHP={100}
-            buffActive={buffActive}
+            potionCount={potionCount}
+            buffCount={buffCount}
             shieldActive={shieldActive}
             onBuy={handleShopBuy}
             onClose={handleShopClose}
@@ -419,7 +430,7 @@ export default function GameScreen() {
             onAnswer={handleAnswer}
             feedback={feedback}
             turn={turn}
-            buffActive={buffActive}
+            buffCount={buffCount}
             shieldActive={shieldActive}
           />
         </div>

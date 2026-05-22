@@ -7,11 +7,11 @@ interface QuestionPanelProps {
   onAnswer: (index: number) => void;
   feedback: string | null;
   turn: number;
-  buffActive: boolean;
+  buffCount: number;
   shieldActive: boolean;
 }
 
-export function QuestionPanel({ question, selectedAnswer, onAnswer, feedback, turn, buffActive, shieldActive }: QuestionPanelProps) {
+export function QuestionPanel({ question, selectedAnswer, onAnswer, feedback, turn, buffCount, shieldActive }: QuestionPanelProps) {
   const letters = ["ก", "ข", "ค", "ง"];
 
   return (
@@ -21,11 +21,11 @@ export function QuestionPanel({ question, selectedAnswer, onAnswer, feedback, tu
       </div>
 
       {/* Active buffs display */}
-      {(buffActive || shieldActive) && (
-        <div className="flex gap-2 mb-2">
-          {buffActive && (
+      {(buffCount > 0 || shieldActive) && (
+        <div className="flex gap-2 mb-2 flex-wrap">
+          {buffCount > 0 && (
             <span className="text-[9px] bg-orange-600 text-white border border-orange-400 px-2 py-0.5 leading-loose">
-              พลัง +20
+              พลังโจมตี ×{buffCount} ชาร์จ
             </span>
           )}
           {shieldActive && (
