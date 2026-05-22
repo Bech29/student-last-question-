@@ -1,8 +1,9 @@
 import { Question } from "@/context/GameContext";
 
 export type Difficulty = "easy" | "medium" | "hard";
-export type Subject = "programming" | "electronics" | "mechanics";
+export type Subject = "programming" | "electronics" | "networking";
 
+// ─── Programming ──────────────────────────────────────────────────────────────
 const PROGRAMMING_EASY: Question[] = [
   { id: 101, question: "โปรแกรมคอมพิวเตอร์คืออะไร?", options: ["ชุดคำสั่งที่ให้คอมพิวเตอร์ทำงาน", "ฮาร์ดแวร์ของคอมพิวเตอร์", "จอแสดงผล", "หน่วยความจำหลัก"], correct: 0 },
   { id: 102, question: "ภาษาโปรแกรมใดเหมาะสำหรับผู้เริ่มต้น?", options: ["Assembly", "Python", "C++", "Rust"], correct: 1 },
@@ -33,6 +34,7 @@ const PROGRAMMING_HARD: Question[] = [
   { id: 305, question: "Design Pattern Observer ใช้แก้ปัญหาอะไร?", options: ["สร้างออบเจกต์จำนวนมาก", "แจ้งเตือนออบเจกต์หลายตัวเมื่อสถานะเปลี่ยน", "เชื่อมต่อฐานข้อมูล", "จัดการหน่วยความจำ"], correct: 1 },
 ];
 
+// ─── Electronics ──────────────────────────────────────────────────────────────
 const ELECTRONICS_EASY: Question[] = [
   { id: 111, question: "โอห์ม (Ohm) ใช้วัดอะไร?", options: ["กระแสไฟฟ้า", "แรงดันไฟฟ้า", "ความต้านทาน", "กำลังไฟฟ้า"], correct: 2 },
   { id: 112, question: "แอมแปร์ (Ampere) ใช้วัดอะไร?", options: ["ความต้านทาน", "กระแสไฟฟ้า", "แรงดันไฟฟ้า", "ความถี่"], correct: 1 },
@@ -63,66 +65,76 @@ const ELECTRONICS_HARD: Question[] = [
   { id: 315, question: "ไมโครคอนโทรลเลอร์แตกต่างจากไมโครโปรเซสเซอร์อย่างไร?", options: ["ทำงานได้เร็วกว่า", "รวม CPU RAM ROM และ I/O ไว้ในชิปเดียว", "ราคาถูกกว่าเสมอ", "ใช้ไฟฟ้ามากกว่า"], correct: 1 },
 ];
 
-const MECHANICS_EASY: Question[] = [
-  { id: 121, question: "เครื่องยนต์สันดาปภายใน (ICE) แปลงพลังงานอะไรเป็นอะไร?", options: ["ไฟฟ้าเป็นกล", "พลังงานเคมีเป็นพลังงานกล", "ความร้อนเป็นไฟฟ้า", "กลเป็นความร้อน"], correct: 1 },
-  { id: 122, question: "น้ำมันเครื่อง (Engine Oil) ทำหน้าที่อะไร?", options: ["ทำให้เครื่องเย็นลง", "จ่ายไฟฟ้า", "หล่อลื่นชิ้นส่วนเครื่องยนต์", "กรองอากาศ"], correct: 2 },
-  { id: 123, question: "ไส้กรองอากาศ (Air Filter) ทำหน้าที่อะไร?", options: ["กรองน้ำมันเชื้อเพลิง", "กรองฝุ่นก่อนอากาศเข้าเครื่องยนต์", "ระบายความร้อน", "เพิ่มกำลัง"], correct: 1 },
-  { id: 124, question: "แบตเตอรี่รถยนต์ทำหน้าที่อะไร?", options: ["กักเก็บน้ำมัน", "ระบายความร้อน", "จ่ายไฟฟ้าให้ระบบสตาร์ทและอุปกรณ์ไฟฟ้า", "หล่อลื่นเครื่องยนต์"], correct: 2 },
-  { id: 125, question: "คลัตช์ (Clutch) ทำหน้าที่อะไร?", options: ["เพิ่มกำลังเครื่องยนต์", "ตัดต่อกำลังระหว่างเครื่องยนต์และเกียร์", "ระบายความร้อน", "กรองอากาศ"], correct: 1 },
-  { id: 126, question: "ยางรถยนต์นิยมวัดความดันด้วยหน่วยใด?", options: ["กิโลกรัม", "เมตร", "PSI หรือ บาร์", "นิวตัน"], correct: 2 },
-  { id: 127, question: "ระบบเบรกไฮดรอลิก (Hydraulic Brake) ทำงานด้วยหลักการใด?", options: ["แรงสปริง", "แรงดันของเหลวส่งแรง", "แรงไฟฟ้า", "แรงลม"], correct: 1 },
-  { id: 128, question: "ไส้กรองน้ำมันเครื่อง (Oil Filter) ทำหน้าที่อะไร?", options: ["เพิ่มน้ำมัน", "กรองสิ่งสกปรกออกจากน้ำมัน", "ทำให้น้ำมันเย็น", "วัดระดับน้ำมัน"], correct: 1 },
+// ─── Networking (เครือข่ายคอมพิวเตอร์) ────────────────────────────────────────
+const NETWORKING_EASY: Question[] = [
+  { id: 121, question: "IP Address คืออะไร?", options: ["ที่อยู่ตัวเลขที่ใช้ระบุอุปกรณ์บนเครือข่าย", "ชื่อโปรโตคอลการส่งข้อมูล", "รหัสผ่านเครือข่าย", "ความเร็วของอินเทอร์เน็ต"], correct: 0 },
+  { id: 122, question: "Router ทำหน้าที่อะไร?", options: ["จัดเก็บข้อมูลเครือข่าย", "เชื่อมต่อและส่งข้อมูลระหว่างเครือข่ายที่ต่างกัน", "แปลงสัญญาณไฟฟ้า", "กรองสัญญาณรบกวน"], correct: 1 },
+  { id: 123, question: "LAN ย่อมาจากอะไร?", options: ["Large Area Network", "Local Area Network", "Limited Access Node", "Line Allocation Network"], correct: 1 },
+  { id: 124, question: "DNS ย่อมาจากอะไร?", options: ["Data Network System", "Domain Name System", "Digital Network Service", "Dynamic Node System"], correct: 1 },
+  { id: 125, question: "Firewall ทำหน้าที่อะไร?", options: ["เพิ่มความเร็วอินเทอร์เน็ต", "จัดเก็บข้อมูลสำรอง", "ป้องกันการเข้าถึงเครือข่ายที่ไม่ได้รับอนุญาต", "แปลงสัญญาณ WiFi"], correct: 2 },
+  { id: 126, question: "HTTP ย่อมาจากอะไร?", options: ["HyperText Transfer Protocol", "High Tech Transmission Protocol", "Hyper Transfer Technology Protocol", "Hosting Text Transfer Procedure"], correct: 0 },
+  { id: 127, question: "MAC Address คืออะไร?", options: ["ที่อยู่ IP แบบถาวร", "ที่อยู่ฮาร์ดแวร์เฉพาะของการ์ดเครือข่าย", "ชื่อโดเมนของอุปกรณ์", "รหัสใบอนุญาตซอฟต์แวร์"], correct: 1 },
+  { id: 128, question: "WiFi ใช้การส่งสัญญาณแบบใด?", options: ["สายทองแดง", "ใยแก้วนำแสง", "คลื่นวิทยุไร้สาย", "อินฟราเรด"], correct: 2 },
 ];
 
-const MECHANICS_MEDIUM: Question[] = [
-  { id: 221, question: "เกียร์อัตโนมัติ (Automatic Transmission) ทำงานอย่างไร?", options: ["คนขับเปลี่ยนเกียร์ด้วยมือ", "เปลี่ยนเกียร์โดยอัตโนมัติตามความเร็วและโหลด", "ใช้คลัตช์ทุกครั้ง", "ไม่มีเกียร์ถอยหลัง"], correct: 1 },
-  { id: 222, question: "หัวเทียน (Spark Plug) ทำหน้าที่อะไร?", options: ["กรองน้ำมันเชื้อเพลิง", "จุดระเบิดส่วนผสมน้ำมันและอากาศ", "ระบายความร้อน", "ปั๊มน้ำมัน"], correct: 1 },
-  { id: 223, question: "ระบบหล่อเย็น (Cooling System) ทำหน้าที่อะไร?", options: ["เพิ่มกำลังเครื่องยนต์", "กรองอากาศ", "ควบคุมอุณหภูมิเครื่องยนต์ไม่ให้ร้อนเกิน", "จ่ายน้ำมันเชื้อเพลิง"], correct: 2 },
-  { id: 224, question: "ABS ย่อมาจากอะไร?", options: ["Automatic Braking System", "Anti-lock Braking System", "Advanced Brake Sensor", "Axle Brake Support"], correct: 1 },
-  { id: 225, question: "ลูกสูบ (Piston) ทำหน้าที่อะไรในเครื่องยนต์?", options: ["กรองอากาศ", "ปั๊มน้ำมัน", "เปลี่ยนแรงดันก๊าซเป็นการเคลื่อนที่เชิงเส้น", "ระบายความร้อน"], correct: 2 },
-  { id: 226, question: "ระบบพวงมาลัยพาวเวอร์ (Power Steering) ทำงานอย่างไร?", options: ["ใช้มอเตอร์ไฟฟ้าหรือปั๊มน้ำมันช่วยผ่อนแรงหมุน", "เพิ่มความเร็ว", "ล็อคพวงมาลัย", "ควบคุมระบบเบรก"], correct: 0 },
-  { id: 227, question: "ไฟหน้า Halogen และ LED ต่างกันอย่างไร?", options: ["Halogen สว่างกว่าเสมอ", "LED ใช้ไฟน้อยกว่าและอายุการใช้งานยาวกว่า", "ราคา Halogen แพงกว่า", "LED ไม่เหมาะกับรถยนต์"], correct: 1 },
-  { id: 228, question: "น้ำหล่อเย็น (Coolant) ควรเปลี่ยนทุกระยะเวลาเท่าไร?", options: ["ทุก 1,000 กม.", "ทุก 5,000 กม.", "ทุก 40,000-60,000 กม.", "ไม่ต้องเปลี่ยน"], correct: 2 },
+const NETWORKING_MEDIUM: Question[] = [
+  { id: 221, question: "OSI Model มีกี่เลเยอร์?", options: ["4", "5", "7", "10"], correct: 2 },
+  { id: 222, question: "TCP แตกต่างจาก UDP อย่างไร?", options: ["TCP เร็วกว่า UDP", "TCP รับประกันการส่งข้อมูล UDP ไม่รับประกัน", "UDP เชื่อถือได้มากกว่า TCP", "ไม่แตกต่างกัน"], correct: 1 },
+  { id: 223, question: "DHCP ทำหน้าที่อะไร?", options: ["เข้ารหัสข้อมูล", "แปลงชื่อโดเมนเป็น IP", "จ่าย IP Address ให้อุปกรณ์โดยอัตโนมัติ", "ตรวจจับไวรัส"], correct: 2 },
+  { id: 224, question: "Port 443 ใช้สำหรับโปรโตคอลใด?", options: ["FTP", "HTTP", "HTTPS", "SSH"], correct: 2 },
+  { id: 225, question: "Switch ต่างจาก Hub อย่างไร?", options: ["Switch ราคาถูกกว่า", "Switch ส่งข้อมูลถึงเฉพาะปลายทาง Hub กระจายทุกพอร์ต", "Hub เร็วกว่า Switch", "ใช้งานเหมือนกันทุกประการ"], correct: 1 },
+  { id: 226, question: "VPN ย่อมาจากอะไร?", options: ["Visual Private Node", "Very Protected Network", "Virtual Private Network", "Verified Protocol Network"], correct: 2 },
+  { id: 227, question: "Subnet Mask ใช้ทำอะไร?", options: ["เพิ่มความปลอดภัย", "แบ่งแยกส่วน Network และ Host ของ IP Address", "จ่าย IP อัตโนมัติ", "แปลงชื่อโดเมน"], correct: 1 },
+  { id: 228, question: "คำสั่ง ping ใช้ทำอะไร?", options: ["ดูรหัสผ่านเครือข่าย", "ทดสอบการเชื่อมต่อระหว่างอุปกรณ์", "ดาวน์โหลดไฟล์", "สแกนไวรัส"], correct: 1 },
 ];
 
-const MECHANICS_HARD: Question[] = [
-  { id: 321, question: "หัวฉีดน้ำมันเชื้อเพลิง (Fuel Injector) ทำงานอย่างไร?", options: ["จ่ายน้ำมันแบบต่อเนื่อง", "พ่นน้ำมันเป็นฝอยในปริมาณที่แม่นยำตามสัญญาณ ECU", "กรองน้ำมัน", "อุ่นน้ำมันก่อนเผาไหม้"], correct: 1 },
-  { id: 322, question: "CVT ย่อมาจากอะไรและทำงานอย่างไร?", options: ["Controlled Variable Torque - ควบคุมแรงบิด", "Continuously Variable Transmission - เปลี่ยนอัตราทดแบบต่อเนื่องไม่มีขั้น", "Central Velocity Trigger - ควบคุมความเร็ว", "Cam Valve Timing - ควบคุมวาล์ว"], correct: 1 },
-  { id: 323, question: "ระบบ OBD-II ในรถยนต์ใช้ทำอะไร?", options: ["เพิ่มกำลังเครื่องยนต์", "วินิจฉัยความผิดปกติของระบบต่างๆ ในรถยนต์", "ปรับปรุงระบบเสียง", "ควบคุมระบบแอร์"], correct: 1 },
-  { id: 324, question: "Torque (แรงบิด) และ Horsepower (แรงม้า) ต่างกันอย่างไร?", options: ["เหมือนกันทุกประการ", "Torque คือแรงบิด HP คืออัตราการทำงาน", "HP วัดเป็นนิวตัน Torque วัดเป็นวัตต์", "Torque ใช้กับรถยนต์เท่านั้น"], correct: 1 },
-  { id: 325, question: "เทอร์โบชาร์จเจอร์ (Turbocharger) เพิ่มกำลังเครื่องยนต์ด้วยวิธีใด?", options: ["เพิ่มขนาดลูกสูบ", "อัดอากาศเข้าเครื่องยนต์มากขึ้นด้วยไอเสีย", "ใช้น้ำมันคุณภาพสูง", "ลดความต้านทานของอากาศ"], correct: 1 },
+const NETWORKING_HARD: Question[] = [
+  { id: 321, question: "TCP Three-way Handshake ทำงานอย่างไร?", options: ["SYN → ACK → SYN", "SYN → SYN-ACK → ACK", "ACK → SYN → SYN-ACK", "SYN → FIN → ACK"], correct: 1 },
+  { id: 322, question: "BGP ใช้ทำอะไรในอินเทอร์เน็ต?", options: ["เข้ารหัสข้อมูลทุกแพ็กเก็ต", "แลกเปลี่ยนข้อมูล routing ระหว่าง ISP ต่างๆ", "จ่าย IP Address", "แปลงชื่อโดเมน"], correct: 1 },
+  { id: 323, question: "VLAN คืออะไร?", options: ["ระบบไฟร์วอลล์ชั้นสูง", "การแบ่งเครือข่ายเสมือนบน switch เดียวกัน", "โปรโตคอลการเข้ารหัส", "ระบบสำรองข้อมูล"], correct: 1 },
+  { id: 324, question: "NAT ย่อมาจากอะไรและทำหน้าที่อะไร?", options: ["Network Analysis Tool — วิเคราะห์เครือข่าย", "Network Address Translation — แปลง IP ส่วนตัวเป็น IP สาธารณะ", "Node Authentication Token — ยืนยันตัวตน", "Network Access Terminal — จุดเชื่อมต่อ"], correct: 1 },
+  { id: 325, question: "IPv6 แตกต่างจาก IPv4 อย่างไร?", options: ["ใช้งานได้เฉพาะเครือข่ายไร้สาย", "มีความยาว 128 บิต รองรับที่อยู่ได้มากกว่ามาก", "ทำงานช้ากว่า IPv4", "ไม่รองรับการเข้ารหัส"], correct: 1 },
 ];
 
+// ─── Shuffle answer choices (keeps correct answer tracked by value) ────────────
+export function shuffleChoices(q: Question): Question {
+  const correctAnswer = q.options[q.correct];
+  const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+  return {
+    ...q,
+    options: shuffled,
+    correct: shuffled.indexOf(correctAnswer),
+  };
+}
+
+// ─── Get question pool for a stage (difficulty-gated by stage index) ──────────
 export function getQuestionsForStage(subject: Subject, stageIndex: number): Question[] {
   let easy: Question[];
   let medium: Question[];
   let hard: Question[];
 
   if (subject === "programming") {
-    easy = PROGRAMMING_EASY;
-    medium = PROGRAMMING_MEDIUM;
-    hard = PROGRAMMING_HARD;
+    easy = PROGRAMMING_EASY; medium = PROGRAMMING_MEDIUM; hard = PROGRAMMING_HARD;
   } else if (subject === "electronics") {
-    easy = ELECTRONICS_EASY;
-    medium = ELECTRONICS_MEDIUM;
-    hard = ELECTRONICS_HARD;
+    easy = ELECTRONICS_EASY; medium = ELECTRONICS_MEDIUM; hard = ELECTRONICS_HARD;
   } else {
-    easy = MECHANICS_EASY;
-    medium = MECHANICS_MEDIUM;
-    hard = MECHANICS_HARD;
+    easy = NETWORKING_EASY; medium = NETWORKING_MEDIUM; hard = NETWORKING_HARD;
   }
 
-  // Stages 1-2: easy, stages 3-4: medium, stages 5-6: hard
-  let pool: Question[];
-  if (stageIndex <= 1) pool = easy;
-  else if (stageIndex <= 3) pool = medium;
-  else pool = hard;
-
+  // stages 0-1 → easy, 2-3 → medium, 4-5 → hard
+  const pool = stageIndex <= 1 ? easy : stageIndex <= 3 ? medium : hard;
   return [...pool].sort(() => Math.random() - 0.5);
 }
 
+// ─── Labels ───────────────────────────────────────────────────────────────────
 export const SUBJECT_LABELS: Record<Subject, string> = {
   programming: "โปรแกรมมิ่ง",
   electronics: "อิเล็กทรอนิกส์",
-  mechanics: "ช่างยนต์",
+  networking:  "เครือข่าย",
+};
+
+export const SUBJECT_QUESTION_COUNTS: Record<Subject, number> = {
+  programming: PROGRAMMING_EASY.length + PROGRAMMING_MEDIUM.length + PROGRAMMING_HARD.length,
+  electronics: ELECTRONICS_EASY.length + ELECTRONICS_MEDIUM.length + ELECTRONICS_HARD.length,
+  networking:  NETWORKING_EASY.length + NETWORKING_MEDIUM.length + NETWORKING_HARD.length,
 };

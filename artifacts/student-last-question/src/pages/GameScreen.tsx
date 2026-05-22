@@ -7,7 +7,7 @@ import { DamageNumber } from "@/components/DamageNumber";
 import { UltimateGauge } from "@/components/UltimateGauge";
 import { ShopModal } from "@/components/ShopModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { getQuestionsForStage, Subject, SUBJECT_LABELS } from "@/data/questions";
+import { getQuestionsForStage, shuffleChoices, Subject, SUBJECT_LABELS } from "@/data/questions";
 import { Question } from "@/context/GameContext";
 import bg2 from "@assets/bg2_1779248796861.jpg";
 import m1Img from "@assets/m1_1779248796739.png";
@@ -93,8 +93,8 @@ export default function GameScreen() {
   const coinsRef           = useRef(0);
   const statsRef           = useRef({ correct: 0, wrong: 0, stagesCleared: 0 });
   const stageIndexRef      = useRef(0);
-  const questionsPoolRef   = useRef<Question[]>([]);  // shuffled pool for current stage
-  const poolIndexRef       = useRef(0);               // next question position in pool
+  const questionsPoolRef   = useRef<Question[]>([]);  // full shuffled pool for current stage
+  const usedIdsRef         = useRef<Set<number>>(new Set()); // IDs used this stage
   const ultimateUsedRef    = useRef(false);           // guard: prevent double-fire
 
   // ─── Load first question on mount ────────────────────────────────────────────
@@ -107,16 +107,31 @@ export default function GameScreen() {
   }, [selectedCharacter, selectedSubject]);
 
   /**
-   * Pick the next question from the pool.
-   * When the pool is exhausted, refill it with a fresh shuffle and restart.
+   * Pick a random unused question from the pool, shuffle its choices, and display it.
+   * When all questions in the pool have been used, reset used-IDs and start fresh
+   * (so a full stage never runs out of questions).
    */
   const loadNewQuestion = (stageIdx: number, subject: Subject) => {
-    if (poolIndexRef.current >= questionsPoolRef.current.length) {
+    // Ensure pool is populated for this stage
+    if (questionsPoolRef.current.length === 0) {
       questionsPoolRef.current = getQuestionsForStage(subject, stageIdx);
-      poolIndexRef.current = 0;
     }
-    const q = questionsPoolRef.current[poolIndexRef.current++];
-    setCurrentQuestion(q);
+
+    // Filter to questions not yet used this stage
+    let available = questionsPoolRef.current.filter(q => !usedIdsRef.current.has(q.id));
+
+    // All used → reset and allow all again (new cycle)
+    if (available.length === 0) {
+      usedIdsRef.current.clear();
+      available = questionsPoolRef.current;
+    }
+
+    // Pick randomly from available unused questions
+    const q = available[Math.floor(Math.random() * available.length)];
+    usedIdsRef.current.add(q.id);
+
+    // Shuffle answer choices so order differs every time
+    setCurrentQuestion(shuffleChoices(q));
     setSelectedAnswer(null);
     setFeedback(null);
   };
@@ -187,9 +202,9 @@ export default function GameScreen() {
     const nextEnemy = allEnemies[nextIdx];
     enemyHPRef.current = nextEnemy.maxHP;
     setEnemyHP(nextEnemy.maxHP);
-    // Reset question pool for the new stage (new difficulty bracket)
+    // Reset question pool + used-IDs for new stage (new difficulty bracket)
     questionsPoolRef.current = [];
-    poolIndexRef.current     = 0;
+    usedIdsRef.current.clear();
     setPendingNextStage(false);
     if (selectedSubject) loadNewQuestion(nextIdx, selectedSubject);
   }, [allEnemies, selectedSubject]);

@@ -7,32 +7,36 @@ import bg1 from "@assets/bg1_1779248796845.png";
 interface SubjectCard {
   id: Subject;
   icon: string;
-  desc: string;
+  topics: string[];
   color: string;
   borderColor: string;
+  questionCount: number;
 }
 
 const SUBJECTS: SubjectCard[] = [
   {
     id: "programming",
-    icon: "</> ",
-    desc: "ตัวแปร, OOP, อัลกอริทึม, ฐานข้อมูล",
+    icon: "</>",
+    topics: ["ตัวแปร & ประเภทข้อมูล", "OOP & ฟังก์ชัน", "อัลกอริทึม & DB"],
     color: "from-purple-900/80 to-purple-700/60",
     borderColor: "border-purple-400",
+    questionCount: 21,
   },
   {
     id: "electronics",
-    icon: "~",
-    desc: "วงจรไฟฟ้า, ส่วนประกอบ, กฎโอห์ม",
+    icon: "⚡",
+    topics: ["วงจรไฟฟ้า & ส่วนประกอบ", "กฎโอห์ม & การคำนวณ", "ดิจิทัล & ไมโครชิป"],
     color: "from-cyan-900/80 to-cyan-700/60",
     borderColor: "border-cyan-400",
+    questionCount: 21,
   },
   {
-    id: "mechanics",
-    icon: "#",
-    desc: "เครื่องยนต์, ระบบรถยนต์, การบำรุงรักษา",
-    color: "from-orange-900/80 to-orange-700/60",
-    borderColor: "border-orange-400",
+    id: "networking",
+    icon: "◈",
+    topics: ["IP, DNS, Router, WiFi", "OSI, TCP/UDP, DHCP", "VPN, NAT, IPv6, BGP"],
+    color: "from-green-900/80 to-green-700/60",
+    borderColor: "border-green-400",
+    questionCount: 21,
   },
 ];
 
@@ -58,7 +62,7 @@ export default function SubjectSelectScreen() {
         >
           <h2 className="text-xl md:text-2xl text-accent leading-loose">เลือกวิชา</h2>
           <p className="text-xs text-muted-foreground leading-loose mt-1">
-            ปวช. ปี 3 — ด่านยิ่งสูงคำถามยิ่งยาก
+            ปวช. ปี 3 — ด่านยิ่งสูงคำถามยิ่งยาก • ตัวเลือกสลับทุกรอบ
           </p>
         </motion.div>
 
@@ -72,12 +76,21 @@ export default function SubjectSelectScreen() {
               whileHover={{ y: -6, scale: 1.02 }}
               onClick={() => handleSelect(s.id)}
               data-testid={`subject-${s.id}`}
-              className={`bg-gradient-to-b ${s.color} border-4 ${s.borderColor} p-6 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] cursor-pointer transition-all`}
+              className={`bg-gradient-to-b ${s.color} border-4 ${s.borderColor} p-5 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] cursor-pointer transition-all`}
             >
-              <div className="text-4xl mb-3 font-mono text-white">{s.icon}</div>
-              <div className="text-sm text-white mb-2 leading-loose">{SUBJECT_LABELS[s.id]}</div>
-              <div className="text-[10px] text-white/70 leading-loose">{s.desc}</div>
-              <div className="mt-4 bg-white/20 border-2 border-white/50 px-4 py-2 text-[10px] text-white uppercase">
+              <div className="text-3xl mb-2 font-mono text-white">{s.icon}</div>
+              <div className="text-sm text-white mb-1 leading-loose font-medium">
+                {SUBJECT_LABELS[s.id]}
+              </div>
+              <div className="text-[9px] text-white/50 mb-3 leading-loose">
+                {s.questionCount} คำถาม
+              </div>
+              <div className="flex flex-col gap-1 mb-3">
+                {s.topics.map((t, ti) => (
+                  <div key={ti} className="text-[9px] text-white/70 leading-loose">• {t}</div>
+                ))}
+              </div>
+              <div className="bg-white/20 border-2 border-white/50 px-4 py-2 text-[10px] text-white uppercase">
                 เลือก
               </div>
             </motion.button>
