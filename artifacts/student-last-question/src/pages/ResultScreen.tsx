@@ -9,9 +9,7 @@ export default function ResultScreen() {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    if (gameResult.playerWon === null) {
-      setLocation("/");
-    }
+    if (gameResult.playerWon === null) setLocation("/");
   }, [gameResult, setLocation]);
 
   if (gameResult.playerWon === null) return null;
@@ -41,11 +39,12 @@ export default function ResultScreen() {
         transition={{ type: "spring", bounce: 0.4 }}
         className="relative z-10 w-full max-w-lg px-4"
       >
-        <div className="border-4 border-white bg-card/90 p-6 md:p-8 text-center shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+        <div className="border-4 border-white bg-card/90 p-5 md:p-8 text-center shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
           <motion.h1
-            animate={{ textShadow: gameResult.playerWon
-              ? ["0 0 20px #a855f7", "0 0 50px #a855f7", "0 0 20px #a855f7"]
-              : ["0 0 20px #ef4444", "0 0 50px #ef4444", "0 0 20px #ef4444"]
+            animate={{
+              textShadow: gameResult.playerWon
+                ? ["0 0 20px #a855f7","0 0 50px #a855f7","0 0 20px #a855f7"]
+                : ["0 0 20px #ef4444","0 0 50px #ef4444","0 0 20px #ef4444"],
             }}
             transition={{ duration: 2, repeat: Infinity }}
             className={`text-3xl md:text-5xl mb-2 font-bold tracking-tighter leading-loose ${gameResult.playerWon ? "text-primary" : "text-destructive"}`}
@@ -54,28 +53,32 @@ export default function ResultScreen() {
             {gameResult.playerWon ? "ชนะแล้ว!" : "แพ้แล้ว!"}
           </motion.h1>
 
-          <p className="text-muted-foreground text-xs mb-6 leading-loose">
+          <p className="text-muted-foreground text-xs mb-5 leading-loose">
             {gameResult.playerWon
               ? "ยอดเยี่ยม! คุณเอาชนะบอสทั้งหมดได้!"
               : "สู้ต่อไป! ความรู้คือพลัง!"}
           </p>
 
-          <div className="grid grid-cols-2 gap-3 text-xs mb-6">
+          <div className="grid grid-cols-2 gap-2 text-[10px] mb-5">
             <div className="bg-background border-2 border-border p-3">
               <div className="text-muted-foreground mb-1 leading-loose">ด่านที่ผ่าน</div>
-              <div className="text-lg text-white" data-testid="stages-cleared">{gameResult.stagesCleared} / 6</div>
+              <div className="text-base text-white" data-testid="stages-cleared">{gameResult.stagesCleared} / 6</div>
             </div>
             <div className="bg-background border-2 border-border p-3">
               <div className="text-muted-foreground mb-1 leading-loose">ความแม่นยำ</div>
-              <div className="text-lg text-accent" data-testid="accuracy">{accuracy}%</div>
+              <div className="text-base text-accent" data-testid="accuracy">{accuracy}%</div>
             </div>
             <div className="bg-background border-2 border-border p-3">
               <div className="text-muted-foreground mb-1 leading-loose">ตอบถูก</div>
-              <div className="text-lg text-green-400" data-testid="correct-count">{gameResult.correctAnswers}</div>
+              <div className="text-base text-green-400" data-testid="correct-count">{gameResult.correctAnswers}</div>
             </div>
             <div className="bg-background border-2 border-border p-3">
               <div className="text-muted-foreground mb-1 leading-loose">ตอบผิด</div>
-              <div className="text-lg text-destructive" data-testid="wrong-count">{gameResult.wrongAnswers}</div>
+              <div className="text-base text-destructive" data-testid="wrong-count">{gameResult.wrongAnswers}</div>
+            </div>
+            <div className="bg-background border-2 border-border p-3 col-span-2">
+              <div className="text-muted-foreground mb-1 leading-loose">เหรียญที่ได้รับ</div>
+              <div className="text-base text-yellow-400" data-testid="coins-earned">{gameResult.coinsEarned} เหรียญ</div>
             </div>
           </div>
 

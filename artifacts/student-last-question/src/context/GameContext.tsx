@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { Subject } from "@/data/questions";
 
 export type Question = {
   id: number;
@@ -20,13 +21,16 @@ export interface GameResult {
   wrongAnswers: number;
   totalQuestions: number;
   stagesCleared: number;
+  coinsEarned: number;
 }
 
 interface GameContextType {
   gameResult: GameResult;
-  setGameResult: (state: GameResult) => void;
+  setGameResult: (r: GameResult) => void;
   selectedCharacter: Character | null;
-  setSelectedCharacter: (char: Character) => void;
+  setSelectedCharacter: (c: Character) => void;
+  selectedSubject: Subject | null;
+  setSelectedSubject: (s: Subject) => void;
   resetGame: () => void;
 }
 
@@ -36,6 +40,7 @@ const defaultResult: GameResult = {
   wrongAnswers: 0,
   totalQuestions: 0,
   stagesCleared: 0,
+  coinsEarned: 0,
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -43,23 +48,28 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export function GameProvider({ children }: { children: ReactNode }) {
   const [gameResult, setGameResult] = useState<GameResult>(defaultResult);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
 
   const resetGame = () => {
     setGameResult(defaultResult);
     setSelectedCharacter(null);
+    setSelectedSubject(null);
   };
 
   return (
-    <GameContext.Provider value={{ gameResult, setGameResult, selectedCharacter, setSelectedCharacter, resetGame }}>
+    <GameContext.Provider value={{
+      gameResult, setGameResult,
+      selectedCharacter, setSelectedCharacter,
+      selectedSubject, setSelectedSubject,
+      resetGame,
+    }}>
       {children}
     </GameContext.Provider>
   );
 }
 
 export function useGame() {
-  const context = useContext(GameContext);
-  if (context === undefined) {
-    throw new Error("useGame must be used within a GameProvider");
-  }
-  return context;
+  const ctx = useContext(GameContext);
+  if (!ctx) throw new Error("useGame must be used within a GameProvider");
+  return ctx;
 }

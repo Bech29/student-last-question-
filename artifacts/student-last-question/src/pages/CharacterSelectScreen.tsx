@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useGame, Character } from "@/context/GameContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import bg1 from "@assets/bg1_1779248796845.png";
 import char1 from "@assets/Kim_Ki-Tae_1779248796708.png";
 import char2 from "@assets/Jun-Gu_1779248796698.jpeg";
@@ -17,8 +17,12 @@ const CHARACTERS: Character[] = [
 
 export default function CharacterSelectScreen() {
   const [, setLocation] = useLocation();
-  const { setSelectedCharacter } = useGame();
+  const { setSelectedCharacter, selectedSubject } = useGame();
   const [hovered, setHovered] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!selectedSubject) setLocation("/subject");
+  }, [selectedSubject, setLocation]);
 
   const handleSelect = (char: Character) => {
     setSelectedCharacter(char);
@@ -27,18 +31,14 @@ export default function CharacterSelectScreen() {
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center relative overflow-hidden">
-      <img
-        src={bg1}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover object-center"
-      />
+      <img src={bg1} alt="" className="absolute inset-0 w-full h-full object-cover object-center" />
       <div className="absolute inset-0 bg-black/70" />
 
       <div className="relative z-10 w-full max-w-5xl px-4">
         <motion.h2
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="text-center text-xl md:text-3xl text-accent mb-2 tracking-tight leading-loose"
+          className="text-center text-xl md:text-3xl text-accent mb-1 tracking-tight leading-loose"
         >
           เลือกตัวละคร
         </motion.h2>
@@ -66,11 +66,7 @@ export default function CharacterSelectScreen() {
               style={{ transform: hovered === char.id ? "translateY(-8px)" : "translateY(0)" }}
             >
               <div className="w-full aspect-[3/4] overflow-hidden bg-black/40 mb-3">
-                <img
-                  src={char.image}
-                  alt={char.thaiName}
-                  className="w-full h-full object-cover object-top"
-                />
+                <img src={char.image} alt={char.thaiName} className="w-full h-full object-cover object-top" />
               </div>
               <p className="text-accent text-xs text-center leading-loose">{char.thaiName}</p>
               <p className="text-muted-foreground text-[10px] text-center leading-loose">{char.name}</p>
@@ -89,7 +85,7 @@ export default function CharacterSelectScreen() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          onClick={() => setLocation("/")}
+          onClick={() => setLocation("/subject")}
           data-testid="back-button"
           className="mt-8 mx-auto block text-muted-foreground text-xs hover:text-white transition-colors leading-loose"
         >
