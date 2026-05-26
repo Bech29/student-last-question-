@@ -93,9 +93,10 @@ export default function GameScreen() {
   const coinsRef           = useRef(0);
   const statsRef           = useRef({ correct: 0, wrong: 0, stagesCleared: 0 });
   const stageIndexRef      = useRef(0);
-  const questionsPoolRef   = useRef<Question[]>([]);  // full shuffled pool for current stage
-  const usedIdsRef         = useRef<Set<number>>(new Set()); // IDs used this stage
-  const ultimateUsedRef    = useRef(false);           // guard: prevent double-fire
+  const questionsPoolRef     = useRef<Question[]>([]);          // pool for current difficulty bracket
+  const usedIdsRef           = useRef<Set<number>>(new Set()); // IDs consumed from pool
+  const currentDifficultyRef = useRef<"easy" | "medium" | "hard">("easy"); // bracket tracker
+  const ultimateUsedRef      = useRef(false);                  // guard: prevent double-fire
 
   // ─── Load first question on mount ────────────────────────────────────────────
   useEffect(() => {
@@ -202,9 +203,15 @@ export default function GameScreen() {
     const nextEnemy = allEnemies[nextIdx];
     enemyHPRef.current = nextEnemy.maxHP;
     setEnemyHP(nextEnemy.maxHP);
-    // Reset question pool + used-IDs for new stage (new difficulty bracket)
-    questionsPoolRef.current = [];
-    usedIdsRef.current.clear();
+    // Only wipe pool when difficulty bracket changes (easy→medium→hard).
+    // Within the same bracket, all monsters share one depleting pool.
+    const newDiff: "easy" | "medium" | "hard" =
+      nextIdx <= 1 ? "easy" : nextIdx <= 3 ? "medium" : "hard";
+    if (newDiff !== currentDifficultyRef.current) {
+      questionsPoolRef.current = [];
+      usedIdsRef.current.clear();
+      currentDifficultyRef.current = newDiff;
+    }
     setPendingNextStage(false);
     if (selectedSubject) loadNewQuestion(nextIdx, selectedSubject);
   }, [allEnemies, selectedSubject]);
