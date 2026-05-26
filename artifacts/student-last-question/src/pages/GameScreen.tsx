@@ -93,10 +93,12 @@ export default function GameScreen() {
   const coinsRef           = useRef(0);
   const statsRef           = useRef({ correct: 0, wrong: 0, stagesCleared: 0 });
   const stageIndexRef      = useRef(0);
-  const questionsPoolRef     = useRef<Question[]>([]);          // pool for current difficulty bracket
-  const usedIdsRef           = useRef<Set<number>>(new Set()); // IDs consumed from pool
-  const currentDifficultyRef = useRef<"easy" | "medium" | "hard">("easy"); // bracket tracker
-  const ultimateUsedRef      = useRef(false);                  // guard: prevent double-fire
+  // ─── Global Deck (single source of truth for all questions) ─────────────────
+  // Initialized ONCE per difficulty bracket. getNextQuestion() pops from it.
+  // Only refilled when length === 0. advanceStage() never touches it.
+  const globalDeckRef     = useRef<Question[]>([]);
+  const deckDifficultyRef = useRef<"" | "easy" | "medium" | "hard">("");
+  const ultimateUsedRef   = useRef(false); // guard: prevent double-fire
 
   // ─── Load first question on mount ────────────────────────────────────────────
   useEffect(() => {
@@ -108,30 +110,39 @@ export default function GameScreen() {
   }, [selectedCharacter, selectedSubject]);
 
   /**
-   * Pick a random unused question from the pool, shuffle its choices, and display it.
-   * When all questions in the pool have been used, reset used-IDs and start fresh
-   * (so a full stage never runs out of questions).
+   * Returns the difficulty bracket name for a given stage index.
+   */
+  const getDifficulty = (stageIdx: number): "easy" | "medium" | "hard" =>
+    stageIdx <= 1 ? "easy" : stageIdx <= 3 ? "medium" : "hard";
+
+  /**
+   * Pops the next question from the Global Deck.
+   *
+   * Rules (enforced here — nowhere else):
+   *  1. If the deck is empty OR the difficulty bracket changed → refill & reshuffle.
+   *  2. Pop one question from the end of the deck (O(1) removal).
+   *  3. The deck is NEVER touched by advanceStage() or any monster logic.
+   */
+  const getNextQuestion = (stageIdx: number, subject: Subject): Question => {
+    const diff = getDifficulty(stageIdx);
+
+    // Refill only when empty (or when entering a new difficulty bracket)
+    if (globalDeckRef.current.length === 0 || diff !== deckDifficultyRef.current) {
+      deckDifficultyRef.current = diff;
+      // getQuestionsForStage already Fisher-Yates shuffles the pool
+      globalDeckRef.current = getQuestionsForStage(subject, stageIdx);
+    }
+
+    // Pop from the end — steadily decreasing global deck
+    return globalDeckRef.current.pop()!;
+  };
+
+  /**
+   * Pulls from the Global Deck, shuffles the answer choices, and displays the question.
+   * This is the ONLY entry point for question display. It calls getNextQuestion().
    */
   const loadNewQuestion = (stageIdx: number, subject: Subject) => {
-    // Ensure pool is populated for this stage
-    if (questionsPoolRef.current.length === 0) {
-      questionsPoolRef.current = getQuestionsForStage(subject, stageIdx);
-    }
-
-    // Filter to questions not yet used this stage
-    let available = questionsPoolRef.current.filter(q => !usedIdsRef.current.has(q.id));
-
-    // All used → reset and allow all again (new cycle)
-    if (available.length === 0) {
-      usedIdsRef.current.clear();
-      available = questionsPoolRef.current;
-    }
-
-    // Pick randomly from available unused questions
-    const q = available[Math.floor(Math.random() * available.length)];
-    usedIdsRef.current.add(q.id);
-
-    // Shuffle answer choices so order differs every time
+    const q = getNextQuestion(stageIdx, subject);
     setCurrentQuestion(shuffleChoices(q));
     setSelectedAnswer(null);
     setFeedback(null);
@@ -197,21 +208,13 @@ export default function GameScreen() {
   }, [allEnemies, setGameResult, setLocation]);
 
   // ─── Advance to next stage ───────────────────────────────────────────────────
+  // NOTE: No pool logic here. getNextQuestion() owns the Global Deck entirely.
   const advanceStage = useCallback((nextIdx: number) => {
     stageIndexRef.current = nextIdx;
     setStageIndex(nextIdx);
     const nextEnemy = allEnemies[nextIdx];
     enemyHPRef.current = nextEnemy.maxHP;
     setEnemyHP(nextEnemy.maxHP);
-    // Only wipe pool when difficulty bracket changes (easy→medium→hard).
-    // Within the same bracket, all monsters share one depleting pool.
-    const newDiff: "easy" | "medium" | "hard" =
-      nextIdx <= 1 ? "easy" : nextIdx <= 3 ? "medium" : "hard";
-    if (newDiff !== currentDifficultyRef.current) {
-      questionsPoolRef.current = [];
-      usedIdsRef.current.clear();
-      currentDifficultyRef.current = newDiff;
-    }
     setPendingNextStage(false);
     if (selectedSubject) loadNewQuestion(nextIdx, selectedSubject);
   }, [allEnemies, selectedSubject]);
